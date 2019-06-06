@@ -11,3 +11,5 @@ before_install:
 
 before_script:
   - ./scripts/PRsanitycheck.py
+  
+ script:
