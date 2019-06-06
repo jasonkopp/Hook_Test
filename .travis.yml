@@ -10,16 +10,3 @@ before_script:
  - ./scripts/PRsanitycheck.py
 
 script:
-
-cache:
-  directories:
-    - "node_modules"
-
-deploy:
-  provider: pages
-  skip-cleanup: true
-  github-token: $GITHUB_TOKEN
-  keep-history: true
-  target-branch: master
-  on:
-    branch: dev
