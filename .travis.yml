@@ -7,6 +7,7 @@ branches:
   - master
 
 before_script:
- - ./scripts/PRsanitycheck.py
+  - chmod +x ./scripts/PRsanitycheck.py build connectedCheck
+  - ./scripts/PRsanitycheck.py
 
 script:
