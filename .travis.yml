@@ -6,11 +6,11 @@ branches:
   only:
   - master
 
-before_install:
-  - chmod +x ./scripts/PRsanitycheck.py
+# before_install:
+#   - chmod +x ./scripts/PRsanitycheck.py
 
-before_script:
-  - ./scripts/PRsanitycheck.py
+# before_script:
+#   - ./scripts/PRsanitycheck.py
 
 script:
-  ./configure && make
+  - ./scripts/PRsanitycheck.py
