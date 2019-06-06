@@ -4,11 +4,12 @@ node_js:
 
 branches:
   only:
-  - dev
+  - master
+
+before_script:
+ - ./scripts/PRsanitycheck.py
 
 script:
-  - npm install
-  - browserify -t brfs src/app.js -o dist/js/bundle.js
 
 cache:
   directories:
