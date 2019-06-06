@@ -6,6 +6,9 @@ branches:
   only:
   - master
 
+before_install:
+  - chmod +x build.sh
+
 before_script:
  - ./scripts/PRsanitycheck.py
 
