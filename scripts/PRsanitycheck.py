@@ -51,7 +51,8 @@ def prsanitycheck():
     #     exit(0)
     # elif mistakes != 0:
     #     exit(1)
-    print(os.getcwd())
+    print("This is the working directory: %s" % os.getcwd())
+    print("This is the file list: %s" % os.listdir())
 
 
 prsanitycheck()
