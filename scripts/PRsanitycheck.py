@@ -44,12 +44,14 @@ def notfourcharacters(codes, exceptions=[""]):
         return 1
 
 def prsanitycheck():
-    codesInCSV = getCSV4CCs("../CSV/")
-    exceptions = ["gif","png","tga"]
-    mistakes = notfourcharacters(codesInCSV, exceptions)
-    if mistakes == 0:
-        exit(0)
-    elif mistakes != 0:
-        exit(1)
+    # codesInCSV = getCSV4CCs("../CSV/")
+    # exceptions = ["gif","png","tga"]
+    # mistakes = notfourcharacters(codesInCSV, exceptions)
+    # if mistakes == 0:
+    #     exit(0)
+    # elif mistakes != 0:
+    #     exit(1)
+    print(os.getcwd())
+
 
 prsanitycheck()
