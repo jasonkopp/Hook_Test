@@ -17,7 +17,8 @@ def csv4ccs():
                 headers = csvReader.fieldnames
                 if 'code' in headers:
                     for row in csvReader:
-                        csvCode = row['code']
+                        code = row['code']
+                        csvCode = code.replace('$20', ' ')
                         csvFile = fileName.lower()
                         csvLine = str(list(row.values()))
                         if 'specification' in headers:
@@ -28,7 +29,7 @@ def csv4ccs():
                         csvCodes.append(csvCode)
                         codesInCSV.append([csvCode, csvSpec, csvFile, csvLine])
 
-    pattern = re.compile("^[A-Za-z0-9+-]{4}$")
+    pattern = re.compile("^[A-Za-z0-9 +-]{4}$")
     for code in codesInCSV:
         if pattern.match(code[0]) == None:
             print(code[0])
