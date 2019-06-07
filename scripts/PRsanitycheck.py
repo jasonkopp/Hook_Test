@@ -44,13 +44,15 @@ def notfourcharacters(codes, exceptions=[""]):
         return 1
 
 def prsanitycheck():
-    # codesInCSV = getCSV4CCs("../CSV/")
-    # exceptions = ["gif","png","tga"]
-    # mistakes = notfourcharacters(codesInCSV, exceptions)
-    # if mistakes == 0:
-    #     exit(0)
-    # elif mistakes != 0:
-    #     exit(1)
+    localrepo = "../CSV/"
+    travisrepo = "CSV/"
+    codesInCSV = getCSV4CCs(travisrepo)
+    exceptions = ["gif","png","tga"]
+    mistakes = notfourcharacters(codesInCSV, exceptions)
+    if mistakes == 0:
+        exit(0)
+    elif mistakes != 0:
+        exit(1)
     print("This is the working directory: %s" % os.getcwd())
     print("This is the file list: %s" % os.listdir())
 
