@@ -49,12 +49,11 @@ def prsanitycheck():
     codesInCSV = getCSV4CCs(travisrepo)
     exceptions = ["gif","png","tga"]
     mistakes = notfourcharacters(codesInCSV, exceptions)
+    print(len(codesInCSV))
     if mistakes == 0:
         exit(0)
     elif mistakes != 0:
         exit(1)
-    print("This is the working directory: %s" % os.getcwd())
-    print("This is the file list: %s" % os.listdir())
 
 
 prsanitycheck()
