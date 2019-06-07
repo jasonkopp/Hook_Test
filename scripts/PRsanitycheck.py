@@ -46,10 +46,9 @@ def notfourcharacters(codes, exceptions=[""]):
 def prsanitycheck():
     localrepo = "../CSV/"
     travisrepo = "CSV/"
-    codesInCSV = getCSV4CCs(travisrepo)
+    codesInCSV = getCSV4CCs(localrepo)
     exceptions = ["gif","png","tga"]
     mistakes = notfourcharacters(codesInCSV, exceptions)
-    print(len(codesInCSV))
     if mistakes == 0:
         exit(0)
     elif mistakes != 0:
