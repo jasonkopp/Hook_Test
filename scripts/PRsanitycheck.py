@@ -2,7 +2,7 @@
 import csv, re, os
 
 # X- are all the codes actually 4 characters (or an escape)?
-# are the codes unique, at least in their table, (and give a warning if the code is also in another table)
+# X - are the codes unique, at least in their table, (and give a warning if the code is also in another table)
 # are the spec shortnames registered, or will they be?
 # are all the mandatory columns filled in?
 
@@ -37,22 +37,49 @@ def notfourcharacters(codes, exceptions=[""]):
             if code[0] not in exceptions:
                 mistakeCodes.append(code[0])
     if mistakeCodes == []:
-        print("All 4ccs are four characters.")
+        print("Four Character Codes Test:\n\tAll 4ccs are four characters - PASS")
         return 0
     else:
-        print("Something is wrong with these codes: %s" % mistakeCodes)
+        print("Four Character Codes Test:\n\tSomething is wrong with these codes: %s - FAIL" % mistakeCodes)
         return 1
+
+def uniqueTest(codes):
+    allcodes = [code[0] for code in codes]
+    duplicates = sorted([[codes[i][0], codes[i][2]] for i in range(len(codes)) if allcodes.count(codes[i][0]) > 1])
+
+    if duplicates == []:
+        print("Duplicate 4CCs Test:\n\tNo duplicates found - PASS")
+        return 0
+    else:
+        print("Duplicate 4CCs Test:")
+        dupsdif = []
+        dupssame = []
+        for i in duplicates:
+            if duplicates.count(i) == 1:
+                # print("\t'%s' from '%s' is a duplicate" % (i[0], i[1]))
+                # dupsdif.append([i[0], i[1]])
+                pass
+            elif duplicates.count(i) > 1:
+                print("\tWARNING '%s' from '%s' is a duplicate WARNING" % (i[0], i[1]))
+                dupssame.append([i[0], i[1]])
+
+        if dupssame != []:
+            print("\tDuplicates found in the same CSV - FAIL")
+            return 1
+        elif dupssame == []:
+            print("\tNo duplicates found in the same CSV - PASS")
+            return 0
 
 def prsanitycheck():
     localrepo = "../CSV/"
     travisrepo = "CSV/"
-    codesInCSV = getCSV4CCs(localrepo)
+    codesInCSV = getCSV4CCs(travisrepo)
     exceptions = ["gif","png","tga"]
-    mistakes = notfourcharacters(codesInCSV, exceptions)
-    if mistakes == 0:
+    not4ccs = notfourcharacters(codesInCSV, exceptions)
+    duplicates = uniqueTest(codesInCSV)
+    if not4ccs + duplicates == 0:
         exit(0)
-    elif mistakes != 0:
+    elif not4ccs + duplicates != 0:
         exit(1)
-
 
 prsanitycheck()
