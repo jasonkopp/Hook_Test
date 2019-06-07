@@ -30,9 +30,11 @@ def csv4ccs():
                         codesInCSV.append([csvCode, csvSpec, csvFile, csvLine])
 
     pattern = re.compile("^[A-Za-z0-9 +-]{4}$")
+    exceptions = ["gif","png","tga"]
     for code in codesInCSV:
         if pattern.match(code[0]) == None:
-            print(code[0])
+            if code[0] not in exceptions:
+                print(code[0])
 
     print("There are %d CSV Codes" % (len(csvCodes)))
 
