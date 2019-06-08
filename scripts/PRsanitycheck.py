@@ -29,12 +29,12 @@ def getCSV4CCs(directory):
                         codesInCSV.append([csvCode, csvSpec, csvFile, csvLine])
     return codesInCSV
 
-def notfourcharacters(codes, exceptions=[""]):
+def notfourcharacters(codes, codeExceptions=[""]):
     pattern = re.compile("^[A-Za-z0-9 +-]{4}$")
     mistakeCodes = []
     for code in codes:
         if pattern.match(code[0]) == None:
-            if code[0] not in exceptions:
+            if code[0] not in codeExceptions:
                 mistakeCodes.append(code[0])
     if mistakeCodes == []:
         print("Four Character Codes Test:\n\tAll 4ccs are four characters - PASS")
@@ -43,8 +43,8 @@ def notfourcharacters(codes, exceptions=[""]):
         print("Four Character Codes Test:\n\tSomething is wrong with these codes: %s - FAIL" % mistakeCodes)
         return 1
 
-def uniqueTest(codes):
-    allcodes = [code[0] for code in codes]
+def uniqueTest(codes, dupexceptions=[]):
+    allcodes = [code[0] for code in codes if code[0] not in dupexceptions]
     duplicates = sorted([[codes[i][0], codes[i][2]] for i in range(len(codes)) if allcodes.count(codes[i][0]) > 1])
 
     if duplicates == []:
@@ -56,7 +56,7 @@ def uniqueTest(codes):
         dupssame = []
         for i in duplicates:
             if duplicates.count(i) == 1:
-                # print("\t'%s' from '%s' is a duplicate" % (i[0], i[1]))
+                print("\t'%s' from '%s' is a duplicate" % (i[0], i[1]))
                 # dupsdif.append([i[0], i[1]])
                 pass
             elif duplicates.count(i) > 1:
@@ -73,10 +73,11 @@ def uniqueTest(codes):
 def prsanitycheck():
     localrepo = "../CSV/"
     travisrepo = "CSV/"
-    codesInCSV = getCSV4CCs(travisrepo)
-    exceptions = ["gif","png","tga"]
-    not4ccs = notfourcharacters(codesInCSV, exceptions)
-    duplicates = uniqueTest(codesInCSV)
+    codesInCSV = getCSV4CCs(localrepo)
+    codeExceptions = ["gif","png","tga"]
+    not4ccs = notfourcharacters(codesInCSV, codeExceptions)
+    dupexceptions = ["m4ae", "tsel", "xml "]
+    duplicates = uniqueTest(codesInCSV, dupexceptions)
     if not4ccs + duplicates == 0:
         exit(0)
     elif not4ccs + duplicates != 0:
