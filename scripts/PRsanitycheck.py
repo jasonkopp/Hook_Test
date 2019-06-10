@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 import csv, re, os
 
+# X- are all the codes actually 4 characters (or an escape)?
+# X - are the codes unique, at least in their table, (and give a warning if the code is also in another table)
+# are the spec shortnames registered, or will they be?
+# are all the mandatory columns filled in?
+
 def getCSV4CCs(directory):
+    csvCodes = []
     codesInCSV = []
-    speclist = []
     for fileName in os.listdir(directory):
         if fileName.endswith(".csv") and fileName != "oti.csv" and fileName != "stream-types.csv":
             with open(directory+fileName, 'r') as csvfile:
@@ -14,19 +19,15 @@ def getCSV4CCs(directory):
                         code = row['code']
                         csvCode = code.replace('$20', ' ')
                         csvFile = fileName.lower()
-                        csvLine = list(row.values())
+                        csvLine = str(list(row.values()))
                         if 'specification' in headers:
                             csvSpec = row['specification'].lower()
                         else:
                             csvSpec = "No spec"
+
+                        csvCodes.append(csvCode)
                         codesInCSV.append([csvCode, csvSpec, csvFile, csvLine])
-                if fileName == "specifications.csv":
-                    for row in csvReader:
-                        linkname = row['linkname']
-                        spec = row['specification']
-                        desc = row['description']
-                        speclist.append([linkname, spec, desc])
-    return(codesInCSV, speclist)
+    return codesInCSV
 
 def notfourcharacters(codes, codeExceptions=[""]):
     pattern = re.compile("^[A-Za-z0-9 +-]{4}$")
@@ -43,110 +44,44 @@ def notfourcharacters(codes, codeExceptions=[""]):
         print("\tSomething is wrong with these codes: %s - FAIL" % mistakeCodes)
         return 1
 
-def duplicatecodes(codes, dupexceptions=[""]):
+def uniqueTest(codes, dupexceptions=[]):
     allcodes = [code[0] for code in codes if code[0] not in dupexceptions]
-    duplicates = sorted([[codes[i][3], codes[i][2]] for i in range(len(codes)) if allcodes.count(codes[i][0]) > 1])
+    duplicates = sorted([[codes[i][0], codes[i][2]] for i in range(len(codes)) if allcodes.count(codes[i][0]) > 1])
 
-    print("\nDuplicate 4CCs Test:")
     if duplicates == []:
-        print("\tNo duplicates found - PASS")
+        print("Duplicate 4CCs Test:\n\tNo duplicates found - PASS")
         return 0
     else:
+        print("Duplicate 4CCs Test:")
         dupsdif = []
         dupssame = []
         for i in duplicates:
             if duplicates.count(i) == 1:
-                print("\t'%s' from '%s'" % (i[0], i[1]))
+                print("\t'%s' from '%s' is a duplicate" % (i[0], i[1]))
                 # dupsdif.append([i[0], i[1]])
                 pass
             elif duplicates.count(i) > 1:
-                print("\tWARNING '%s' from '%s' - WARNING" % (i[0], i[1]))
+                print("\tWARNING '%s' from '%s' is a duplicate WARNING" % (i[0], i[1]))
                 dupssame.append([i[0], i[1]])
 
         if dupssame != []:
             print("\tDuplicates found in the same CSV - FAIL")
             return 1
         elif dupssame == []:
-            print("\tNo duplicates found in the SAME CSV - PASS")
+            print("\tNo duplicates found in the same CSV - PASS")
             return 0
 
-
-def registeredspecs(codesInCSV, speclist, specexceptions=[""]):
-    unregisteredspecs = []
-    allspecs = [spec[1].lower() for spec in speclist]+specexceptions
-    for a in range(len(codesInCSV)):
-        if codesInCSV[a][1].lower() not in allspecs:
-            unregisteredspecs.append(codesInCSV[a][1])
-    print("\nRegistered Specs Test:")
-    if unregisteredspecs == []:
-        print("\tAll specexceptions are registered - PASS")
-        return 0
-    elif unregisteredspecs != []:
-        print("\tThese specifications aren't registered: %s - FAIL" % unregisteredspecs)
-        return 1
-
-def filledcolumns(codesInCSV):
-    # missingcols=[]
-    # for a in range(len(codesInCSV)):
-    #     #fourth index in sample-entry (ObjectType) is okay if it is blank. But print the row if any other columns are blank
-    #     if codesInCSV[a][2] == "sample-entries.csv" and codesInCSV[a][3][4] == '':
-    #         for b in range(0,3):
-    #             if codesInCSV[a][3][b] == "":
-    #                 missingcols.append([codesInCSV[a][3], codesInCSV[a][2]])
-    #     else:
-    #         for b in range(len(codesInCSV[a][3])):
-    #             if codesInCSV[a][3][b] == '' or codesInCSV[a][3][b] == ' ':
-    #                 missingcols.append([codesInCSV[a][3], codesInCSV[a][2]])
-    missingcols=[]
-    for a in range(len(codesInCSV)):
-        #fourth index in sample-entry (ObjectType) is okay if it is blank. But print the row if any other columns are blank
-        for b in range(len(codesInCSV[a][3])):
-            if codesInCSV[a][3][b] == '':
-                missingcols.append([codesInCSV[a][3], codesInCSV[a][2]])
-    print("\nMissing Columns Test:")
-    if missingcols == []:
-        print("\tNo missing columns - PASS")
-        return 0
-    elif missingcols != []:
-        for row in missingcols:
-            print("\t%s" % row)
-        print("\tThere are missing columns - FAIL")
-        return 1
-    return missingcols
-
-
 def prsanitycheck():
-    #GET CODES
     localrepo = "../CSV/"
     travisrepo = "CSV/"
     codesInCSV = getCSV4CCs(travisrepo)
-
-    #TEST for four characters
-    codeExceptions = [] #Type in exceptions if you need to
-    not4ccs = notfourcharacters(codesInCSV[0], codeExceptions)
-
-    #Test for Duplicates
-    dupexceptions = ["xml "]
-    duplicates = duplicatecodes(codesInCSV[0], dupexceptions)
-
-    #Test for Specifications
-    specexceptions = ["see (1) below"]
-    unregisteredspecs = registeredspecs(codesInCSV[0], codesInCSV[1], specexceptions)
-
-    #Test for Filled in Columns
-    # colsexceptions = [""]
-    emptycols = filledcolumns(codesInCSV[0])
-
-    #Exit Codes
-    returnvalue = not4ccs + duplicates + unregisteredspecs + emptycols
-    if returnvalue == 0:
-        print("\nPR passed all checks")
+    codeExceptions = ["gif","png","tga"]
+    not4ccs = notfourcharacters(codesInCSV, codeExceptions)
+    dupexceptions = ["m4ae", "tsel", "xml "]
+    duplicates = uniqueTest(codesInCSV, dupexceptions)
+    if not4ccs + duplicates == 0:
         exit(0)
-    elif returnvalue != 0:
-        if returnvalue == 1:
-            print("\nPR failed 1 check")
-        elif returnvalue > 1:
-            print("\nPR failed %d checks" % returnvalue)
-        exit(returnvalue)
+    elif not4ccs + duplicates != 0:
+        exit(1)
 
 prsanitycheck()
