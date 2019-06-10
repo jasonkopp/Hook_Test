@@ -45,7 +45,7 @@ def notfourcharacters(codes, codeExceptions=[""]):
 
 def duplicatecodes(codes, dupexceptions=[]):
     allcodes = [code[0] for code in codes if code[0] not in dupexceptions]
-    duplicates = sorted([[codes[i][0], codes[i][2]] for i in range(len(codes)) if allcodes.count(codes[i][0]) > 1])
+    duplicates = sorted([[codes[i][3], codes[i][2]] for i in range(len(codes)) if allcodes.count(codes[i][0]) > 1])
 
     if duplicates == []:
         print("Duplicate 4CCs Test:\n\tNo duplicates found - PASS")
@@ -56,11 +56,11 @@ def duplicatecodes(codes, dupexceptions=[]):
         dupssame = []
         for i in duplicates:
             if duplicates.count(i) == 1:
-                print("\t'%s' from '%s' is a duplicate" % (i[0], i[1]))
+                print("\t'%s' from '%s'" % (i[0], i[1]))
                 # dupsdif.append([i[0], i[1]])
                 pass
             elif duplicates.count(i) > 1:
-                print("\tWARNING '%s' from '%s' is a duplicate WARNING" % (i[0], i[1]))
+                print("\tWARNING '%s' from '%s' - WARNING" % (i[0], i[1]))
                 dupssame.append([i[0], i[1]])
 
         if dupssame != []:
@@ -72,7 +72,7 @@ def duplicatecodes(codes, dupexceptions=[]):
 
 def prsanitycheck():
     codesInCSV = getCSV4CCs("CSV/")
-    codeExceptions = ["gif","png","tga"] #PR SUBMITTED TO FIX THESE ISSUES
+    codeExceptions = [] #Type in exceptions if you need to
     not4ccs = notfourcharacters(codesInCSV, codeExceptions)
     dupexceptions = ["m4ae", "tsel", "xml "] #PR SUBMITED TO FIX "tsel" AND "m4ae". - "xml " is actually an exception.
     duplicates = duplicatecodes(codesInCSV, dupexceptions)
