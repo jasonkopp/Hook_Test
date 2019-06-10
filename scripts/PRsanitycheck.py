@@ -44,7 +44,7 @@ def notfourcharacters(codes, codeExceptions=[""]):
         print("\tSomething is wrong with these codes: %s - FAIL" % mistakeCodes)
         return 1
 
-def uniqueTest(codes, dupexceptions=[]):
+def duplicatecodes(codes, dupexceptions=[]):
     allcodes = [code[0] for code in codes if code[0] not in dupexceptions]
     duplicates = sorted([[codes[i][0], codes[i][2]] for i in range(len(codes)) if allcodes.count(codes[i][0]) > 1])
 
@@ -61,7 +61,7 @@ def uniqueTest(codes, dupexceptions=[]):
                 # dupsdif.append([i[0], i[1]])
                 pass
             elif duplicates.count(i) > 1:
-                print("\tWARNING '%s' from '%s' is a duplicate WARNING" % (i[0], i[1]))
+                print("\t'%s' from '%s' is a duplicate ------WARNING" % (i[0], i[1]))
                 dupssame.append([i[0], i[1]])
 
         if dupssame != []:
@@ -72,16 +72,56 @@ def uniqueTest(codes, dupexceptions=[]):
             return 0
 
 def prsanitycheck():
+    #GET CODES
     localrepo = "../CSV/"
     travisrepo = "CSV/"
     codesInCSV = getCSV4CCs(travisrepo)
-    codeExceptions = ["gif","png","tga"]
+
+    #TEST for four characters
+    codeExceptions = [] #Type in exceptions if you need to
     not4ccs = notfourcharacters(codesInCSV, codeExceptions)
-    dupexceptions = ["m4ae", "tsel", "xml "]
-    duplicates = uniqueTest(codesInCSV, dupexceptions)
+
+    #Test for Duplicates
+    dupexceptions = ["xml "]
+    duplicates = duplicatecodes(codesInCSV, dupexceptions)
+
     if not4ccs + duplicates == 0:
         exit(0)
     elif not4ccs + duplicates != 0:
         exit(1)
 
 prsanitycheck()
+
+
+    # #GET CODES
+    # localrepo = "../CSV/"
+    # travisrepo = "CSV/"
+    # codesInCSV = getCSV4CCs(travisrepo)
+    #
+    # #TEST for four characters
+    # codeExceptions = [] #Type in exceptions if you need to
+    # not4ccs = notfourcharacters(codesInCSV[0], codeExceptions)
+    #
+    # #Test for Duplicates
+    # dupexceptions = ["xml "]
+    # duplicates = duplicatecodes(codesInCSV[0], dupexceptions)
+    #
+    # #Test for Specifications
+    # specexceptions = ["see (1) below"]
+    # unregisteredspecs = registeredspecs(codesInCSV[0], codesInCSV[1], specexceptions)
+    #
+    # #Test for Filled in Columns
+    # # colsexceptions = [""]
+    # emptycols = filledcolumns(codesInCSV[0])
+    #
+    # #Exit Codes
+    # returnvalue = not4ccs + duplicates + unregisteredspecs + emptycols
+    # if returnvalue == 0:
+    #     print("\nPR passed all checks")
+    #     exit(0)
+    # elif returnvalue != 0:
+    #     if returnvalue == 1:
+    #         print("\nPR failed 1 check")
+    #     elif returnvalue > 1:
+    #         print("\nPR failed %d checks" % returnvalue)
+    #     exit(returnvalue)
