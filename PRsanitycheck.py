@@ -7,8 +7,8 @@ import csv, re, os
 # are all the mandatory columns filled in?
 
 def getCSV4CCs(directory):
-    csvCodes = []
     codesInCSV = []
+    speclist = []
     for fileName in os.listdir(directory):
         if fileName.endswith(".csv") and fileName != "oti.csv" and fileName != "stream-types.csv":
             with open(directory+fileName, 'r') as csvfile:
@@ -24,10 +24,14 @@ def getCSV4CCs(directory):
                             csvSpec = row['specification'].lower()
                         else:
                             csvSpec = "No spec"
-
-                        csvCodes.append(csvCode)
                         codesInCSV.append([csvCode, csvSpec, csvFile, csvLine])
-    return codesInCSV
+                if fileName == "specifications.csv":
+                    for row in csvReader:
+                        linkname = row['linkname']
+                        spec = row['specification']
+                        desc = row['description']
+                        speclist.append([linkname, spec, desc])
+    return(codesInCSV, speclist)
 
 def notfourcharacters(codes, codeExceptions=[""]):
     pattern = re.compile("^[A-Za-z0-9 +-]{4}$")
@@ -70,14 +74,23 @@ def duplicatecodes(codes, dupexceptions=[]):
             print("\tNo duplicates found in the same CSV - PASS")
             return 0
 
+
+def registeredspecs(codesInCSV, speclist):
+    allspecs = [spec[1].lower() for spec in speclist]
+    # print(allspecs)
+    for a in range(len(codesInCSV)):
+        if codesInCSV[a][1].lower() not in allspecs:
+            print(codesInCSV[a][1].lower())
+
 def prsanitycheck():
     localrepo = "../CSV/"
     travisrepo = "CSV/"
     codesInCSV = getCSV4CCs(travisrepo)
     codeExceptions = [] #Type in exceptions if you need to
-    not4ccs = notfourcharacters(codesInCSV, codeExceptions)
+    not4ccs = notfourcharacters(codesInCSV[0], codeExceptions)
     dupexceptions = ["m4ae", "tsel", "xml "] #PR SUBMITED TO FIX "tsel" AND "m4ae". - "xml " is actually an exception.
-    duplicates = duplicatecodes(codesInCSV, dupexceptions)
+    duplicates = duplicatecodes(codesInCSV[0], dupexceptions)
+    regshortnames = registeredspecs(codesInCSV[0], codesInCSV[1])
     if not4ccs + duplicates == 0:
         exit(0)
     elif not4ccs + duplicates != 0:
