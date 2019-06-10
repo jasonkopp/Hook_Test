@@ -119,7 +119,7 @@ def prsanitycheck():
     #GET CODES
     localrepo = "../CSV/"
     travisrepo = "CSV/"
-    codesInCSV = getCSV4CCs(travisrepo)
+    codesInCSV = getCSV4CCs(localrepo)
 
     #TEST for four characters
     codeExceptions = [] #Type in exceptions if you need to
@@ -150,3 +150,6 @@ def prsanitycheck():
         exit(returnvalue)
 
 prsanitycheck()
+
+print("This is the working directory: %s" % os.getcwd())
+print("This is the file list in csv: %s" % os.listdir(csv/))
