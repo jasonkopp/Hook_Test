@@ -152,4 +152,4 @@ def prsanitycheck():
 prsanitycheck()
 
 print("This is the working directory: %s" % os.getcwd())
-print("This is the file list in csv: %s" % os.listdir(csv/))
+print("This is the file list in csv: %s" % os.listdir(csv))
