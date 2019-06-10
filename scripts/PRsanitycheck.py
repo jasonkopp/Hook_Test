@@ -86,16 +86,23 @@ def registeredspecs(codesInCSV, speclist, specexceptions=[""]):
         return 1
 
 def filledcolumns(codesInCSV):
+    # missingcols=[]
+    # for a in range(len(codesInCSV)):
+    #     #fourth index in sample-entry (ObjectType) is okay if it is blank. But print the row if any other columns are blank
+    #     if codesInCSV[a][2] == "sample-entries.csv" and codesInCSV[a][3][4] == '':
+    #         for b in range(0,3):
+    #             if codesInCSV[a][3][b] == "":
+    #                 missingcols.append([codesInCSV[a][3], codesInCSV[a][2]])
+    #     else:
+    #         for b in range(len(codesInCSV[a][3])):
+    #             if codesInCSV[a][3][b] == '' or codesInCSV[a][3][b] == ' ':
+    #                 missingcols.append([codesInCSV[a][3], codesInCSV[a][2]])
     missingcols=[]
     for a in range(len(codesInCSV)):
         #fourth index in sample-entry (ObjectType) is okay if it is blank. But print the row if any other columns are blank
-        if codesInCSV[a][2] == "sample-entries.csv" and codesInCSV[a][3][4] == '':
-            for b in range(0,3):
-                if codesInCSV[a][3][b] == "":
-                    missingcols.append([codesInCSV[a][3], codesInCSV[a][2]])
-        else:
-            for b in range(len(codesInCSV[a][3])):
-                if codesInCSV[a][3][b] == '' or codesInCSV[a][3][b] == ' ':
+        for b in range(len(codesInCSV[a][3])):
+            if codesInCSV[a][3][b] == '':
+                if codesInCSV[a][2] == "sample-entries.csv" and codesInCSV[a][3][4] == '':
                     missingcols.append([codesInCSV[a][3], codesInCSV[a][2]])
     print("\nMissing Columns Test:")
     if missingcols == []:
@@ -113,7 +120,7 @@ def prsanitycheck():
     #GET CODES
     localrepo = "../CSV/"
     travisrepo = "CSV/"
-    codesInCSV = getCSV4CCs(travisrepo) 
+    codesInCSV = getCSV4CCs(travisrepo)
 
     #TEST for four characters
     codeExceptions = [] #Type in exceptions if you need to
@@ -132,14 +139,15 @@ def prsanitycheck():
     emptycols = filledcolumns(codesInCSV[0])
 
     #Exit Codes
-    if not4ccs + duplicates + unregisteredspecs == 0:
+    returnvalue = not4ccs + duplicates + unregisteredspecs + emptycols
+    if returnvalue == 0:
         print("\nPR passed all checks")
         exit(0)
-    elif not4ccs + duplicates + unregisteredspecs != 0:
-        if (not4ccs + duplicates + unregisteredspecs) == 1:
+    elif returnvalue != 0:
+        if returnvalue == 1:
             print("\nPR failed 1 check")
-        elif (not4ccs + duplicates + unregisteredspecs) > 1:
-            print("\nPR failed %d checks" % (not4ccs + duplicates + unregisteredspecs))
-        exit(not4ccs + duplicates + unregisteredspecs)
+        elif returnvalue > 1:
+            print("\nPR failed %d checks" % returnvalue)
+        exit(returnvalue)
 
 prsanitycheck()
