@@ -43,7 +43,7 @@ def notfourcharacters(codes, codeExceptions=[""]):
         print("Four Character Codes Test:\n\tSomething is wrong with these codes: %s - FAIL" % mistakeCodes)
         return 1
 
-def uniqueTest(codes, dupexceptions=[]):
+def duplicatecodes(codes, dupexceptions=[]):
     allcodes = [code[0] for code in codes if code[0] not in dupexceptions]
     duplicates = sorted([[codes[i][0], codes[i][2]] for i in range(len(codes)) if allcodes.count(codes[i][0]) > 1])
 
@@ -75,7 +75,7 @@ def prsanitycheck():
     codeExceptions = ["gif","png","tga"] #PR SUBMITTED TO FIX THESE ISSUES
     not4ccs = notfourcharacters(codesInCSV, codeExceptions)
     dupexceptions = ["m4ae", "tsel", "xml "] #PR SUBMITED TO FIX "tsel" AND "m4ae". - "xml " is actually an exception.
-    duplicates = uniqueTest(codesInCSV, dupexceptions)
+    duplicates = duplicatecodes(codesInCSV, dupexceptions)
     if not4ccs + duplicates == 0:
         exit(0)
     elif not4ccs + duplicates != 0:
