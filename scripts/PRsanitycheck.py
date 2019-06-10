@@ -102,8 +102,7 @@ def filledcolumns(codesInCSV):
         #fourth index in sample-entry (ObjectType) is okay if it is blank. But print the row if any other columns are blank
         for b in range(len(codesInCSV[a][3])):
             if codesInCSV[a][3][b] == '':
-                if codesInCSV[a][2] == "sample-entries.csv" and codesInCSV[a][3][4] == '':
-                    missingcols.append([codesInCSV[a][3], codesInCSV[a][2]])
+                missingcols.append([codesInCSV[a][3], codesInCSV[a][2]])
     print("\nMissing Columns Test:")
     if missingcols == []:
         print("\tNo missing columns - PASS")
