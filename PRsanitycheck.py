@@ -71,12 +71,10 @@ def uniqueTest(codes, dupexceptions=[]):
             return 0
 
 def prsanitycheck():
-    localrepo = "../CSV/"
-    travisrepo = "CSV/"
-    codesInCSV = getCSV4CCs(travisrepo)
-    codeExceptions = ["gif","png","tga"]
+    codesInCSV = getCSV4CCs("CSV/")
+    codeExceptions = ["gif","png","tga"] #PR SUBMITTED TO FIX THESE ISSUES
     not4ccs = notfourcharacters(codesInCSV, codeExceptions)
-    dupexceptions = ["m4ae", "tsel", "xml "]
+    dupexceptions = ["m4ae", "tsel", "xml "] #PR SUBMITED TO FIX "tsel" AND "m4ae". - "xml " is actually an exception.
     duplicates = uniqueTest(codesInCSV, dupexceptions)
     if not4ccs + duplicates == 0:
         exit(0)
