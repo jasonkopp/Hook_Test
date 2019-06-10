@@ -71,7 +71,9 @@ def duplicatecodes(codes, dupexceptions=[]):
             return 0
 
 def prsanitycheck():
-    codesInCSV = getCSV4CCs("CSV/")
+    localrepo = "../CSV/"
+    travisrepo = "CSV/"
+    codesInCSV = getCSV4CCs(travisrepo)
     codeExceptions = [] #Type in exceptions if you need to
     not4ccs = notfourcharacters(codesInCSV, codeExceptions)
     dupexceptions = ["m4ae", "tsel", "xml "] #PR SUBMITED TO FIX "tsel" AND "m4ae". - "xml " is actually an exception.
