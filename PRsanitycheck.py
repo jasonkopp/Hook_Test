@@ -47,7 +47,7 @@ def notfourcharacters(codes, codeExceptions=[""]):
         print("Four Character Codes Test:\n\tSomething is wrong with these codes: %s - FAIL" % mistakeCodes)
         return 1
 
-def duplicatecodes(codes, dupexceptions=[]):
+def duplicatecodes(codes, dupexceptions=[""]):
     allcodes = [code[0] for code in codes if code[0] not in dupexceptions]
     duplicates = sorted([[codes[i][3], codes[i][2]] for i in range(len(codes)) if allcodes.count(codes[i][0]) > 1])
 
@@ -75,25 +75,47 @@ def duplicatecodes(codes, dupexceptions=[]):
             return 0
 
 
-def registeredspecs(codesInCSV, speclist):
-    allspecs = [spec[1].lower() for spec in speclist]
-    # print(allspecs)
+def registeredspecs(codesInCSV, speclist, specexceptions=[""]):
+    unregisteredspecs = []
+    allspecs = [spec[1].lower() for spec in speclist]+specexceptions
     for a in range(len(codesInCSV)):
         if codesInCSV[a][1].lower() not in allspecs:
-            print(codesInCSV[a][1].lower())
+            unregisteredspecs.append(codesInCSV[a][1])
+    print("Registered Specs Test:")
+    if unregisteredspecs == []:
+        print("\tAll specexceptions are registered - PASS")
+        return 0
+    elif unregisteredspecs != []:
+        print("\tThese specifications aren't registered: %s - FAIL" % unregisteredspecs)
+        return 1
 
 def prsanitycheck():
+    #GET CODES
     localrepo = "../CSV/"
     travisrepo = "CSV/"
     codesInCSV = getCSV4CCs(travisrepo)
+
+    #TEST for four characters
     codeExceptions = [] #Type in exceptions if you need to
     not4ccs = notfourcharacters(codesInCSV[0], codeExceptions)
+
+    #Test for Duplicates
     dupexceptions = ["m4ae", "tsel", "xml "] #PR SUBMITED TO FIX "tsel" AND "m4ae". - "xml " is actually an exception.
     duplicates = duplicatecodes(codesInCSV[0], dupexceptions)
-    regshortnames = registeredspecs(codesInCSV[0], codesInCSV[1])
-    if not4ccs + duplicates == 0:
+
+    #Test for Specifications
+    specexceptions = ["see (1) below"]
+    unregisteredspecs = registeredspecs(codesInCSV[0], codesInCSV[1], specexceptions)
+
+    #Exit Codes
+    if not4ccs + duplicates + unregisteredspecs == 0:
+        print("PR passed all checks")
         exit(0)
-    elif not4ccs + duplicates != 0:
-        exit(1)
+    elif not4ccs + duplicates + unregisteredspecs != 0:
+        if (not4ccs + duplicates + unregisteredspecs) == 1:
+            print("PR failed 1 check")
+        elif (not4ccs + duplicates + unregisteredspecs) > 1:
+            print("PR failed %d checks" % (not4ccs + duplicates + unregisteredspecs))
+        exit(not4ccs + duplicates + unregisteredspecs)
 
 prsanitycheck()
