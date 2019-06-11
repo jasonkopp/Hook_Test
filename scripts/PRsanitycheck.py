@@ -87,7 +87,7 @@ def prsanitycheck():
     not4ccs = notfourcharacters(codesspecs, codeExceptions)
 
     #Test for Duplicates
-    dupexceptions = ["xml ", "file", " or "]
+    dupexceptions = ["xml "]
     duplicates = duplicatecodes(codesspecs, dupexceptions)
 
     # Exit Codes
