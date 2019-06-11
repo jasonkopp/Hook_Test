@@ -102,25 +102,22 @@ def prsanitycheck():
     elif not4ccs + duplicates != 0:
         exit(1)
 
-    # returnvalue = not4ccs + duplicates #+ unregisteredspecs + emptycols
-    # if returnvalue == 0:
-    #     print("\nPR passed all checks")
-    #     exit(0)
-    # elif returnvalue != 0:
-    #     if returnvalue == 1:
-    #         print("\nPR failed 1 check")
-    #     elif returnvalue > 1:
-    #         print("\nPR failed %d checks" % returnvalue)
-    #     exit(returnvalue)
-
 prsanitycheck()
 
 
-
+    # #GET CODES
+    # localrepo = "../CSV/"
+    # travisrepo = "CSV/"
+    # codesInCSV = getCSV4CCs(travisrepo)
+    #
+    # #TEST for four characters
+    # codeExceptions = [] #Type in exceptions if you need to
     # not4ccs = notfourcharacters(codesInCSV[0], codeExceptions)
-
+    #
+    # #Test for Duplicates
+    # dupexceptions = ["xml "]
     # duplicates = duplicatecodes(codesInCSV[0], dupexceptions)
-
+    #
     # #Test for Specifications
     # specexceptions = ["see (1) below"]
     # unregisteredspecs = registeredspecs(codesInCSV[0], codesInCSV[1], specexceptions)
