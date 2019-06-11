@@ -7,8 +7,8 @@ import csv, re, os
 # are all the mandatory columns filled in?
 
 def getCSV4CCs(directory):
-    csvCodes = []
     codesInCSV = []
+    speclist = []
     for fileName in os.listdir(directory):
         if fileName.endswith(".csv") and fileName != "oti.csv" and fileName != "stream-types.csv":
             with open(directory+fileName, 'r') as csvfile:
@@ -28,10 +28,14 @@ def getCSV4CCs(directory):
                             csvSpec = row['specification'].lower()
                         else:
                             csvSpec = "No spec"
-
-                        csvCodes.append(csvCode)
                         codesInCSV.append([csvCode, csvSpec, csvFile, csvLine])
-    return codesInCSV
+                if fileName == "specifications.csv":
+                    for row in csvReader:
+                        linkname = row['linkname']
+                        spec = row['specification']
+                        desc = row['description']
+                        speclist.append([linkname, spec, desc])
+    return(codesInCSV, speclist)
 
 def notfourcharacters(codes, exceptions=[""]):
     pattern = re.compile("^[A-Za-z0-9 +-]{4}$")
@@ -86,15 +90,15 @@ def prsanitycheck():
     #GET CODES
     localrepo = "../CSV/"
     travisrepo = "CSV/"
-    codesspecs = getCSV4CCs(travisrepo)
+    codesspecs = getCSV4CCs(localrepo)
 
     #TEST for four characters
     codeExceptions = [] #Type in exceptions if you need to
-    not4ccs = notfourcharacters(codesspecs, codeExceptions)
+    not4ccs = notfourcharacters(codesspecs[0], codeExceptions)
 
     #Test for Duplicates
     dupexceptions = ["xml "]
-    duplicates = duplicatecodes(codesspecs, dupexceptions)
+    duplicates = duplicatecodes(codesspecs[0], dupexceptions)
 
     # Exit Codes
     returnvalue = not4ccs + duplicates #+ unregisteredspecs + emptycols
@@ -111,17 +115,9 @@ def prsanitycheck():
 prsanitycheck()
 
 
-    # #GET CODES
-    # localrepo = "../CSV/"
-    # travisrepo = "CSV/"
-    # codesInCSV = getCSV4CCs(travisrepo)
-    #
-    # #TEST for four characters
-    # codeExceptions = [] #Type in exceptions if you need to
+
     # not4ccs = notfourcharacters(codesInCSV[0], codeExceptions)
-    #
-    # #Test for Duplicates
-    # dupexceptions = ["xml "]
+
     # duplicates = duplicatecodes(codesInCSV[0], dupexceptions)
     #
     # #Test for Specifications
@@ -131,15 +127,3 @@ prsanitycheck()
     # #Test for Filled in Columns
     # # colsexceptions = [""]
     # emptycols = filledcolumns(codesInCSV[0])
-    #
-    # #Exit Codes
-    # returnvalue = not4ccs + duplicates + unregisteredspecs + emptycols
-    # if returnvalue == 0:
-    #     print("\nPR passed all checks")
-    #     exit(0)
-    # elif returnvalue != 0:
-    #     if returnvalue == 1:
-    #         print("\nPR failed 1 check")
-    #     elif returnvalue > 1:
-    #         print("\nPR failed %d checks" % returnvalue)
-    #     exit(returnvalue)
