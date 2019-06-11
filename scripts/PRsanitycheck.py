@@ -19,7 +19,11 @@ def getCSV4CCs(directory):
                         code = row['code']
                         csvCode = code.replace('$20', ' ')
                         csvFile = fileName.lower()
-                        csvLine = str(list(row.values()))
+                        csvLine = list(row.values())
+                        if 'description' in headers:
+                            csvDesc = row['description'].lower()
+                        else:
+                            csvDesc = "No desc"
                         if 'specification' in headers:
                             csvSpec = row['specification'].lower()
                         else:
@@ -46,25 +50,33 @@ def notfourcharacters(codes, codeExceptions=[""]):
 
 def duplicatecodes(codes, dupexceptions=[]):
     allcodes = [code[0] for code in codes if code[0] not in dupexceptions]
-    duplicates = sorted([[codes[i][0], codes[i][2]] for i in range(len(codes)) if allcodes.count(codes[i][0]) > 1])
+    # duplicates = sorted([[codes[i][0], codes[i][2]] for i in range(len(codes)) if allcodes.count(codes[i][0]) > 1])
+
+    duplicates = []
+    dupcodes = []
+    for i in range(len(codes)):
+        if allcodes.count(codes[i][0]) > 1:
+            duplicates.append([codes[i][3], codes[i][2]])
+    duplicates = sorted(duplicates)
 
     if duplicates == []:
         print("Duplicate 4CCs Test:\n\tNo duplicates found - PASS")
         return 0
     else:
         print("Duplicate 4CCs Test:")
-        dupsdif = []
-        dupssame = []
-        for i in duplicates:
-            if duplicates.count(i) == 1:
-                print("\t'%s' from '%s' is a duplicate" % (i[0], i[1]))
-                # dupsdif.append([i[0], i[1]])
-                pass
-            elif duplicates.count(i) > 1:
-                print("\t'%s' from '%s' is a duplicate ------WARNING" % (i[0], i[1]))
-                dupssame.append([i[0], i[1]])
-
-        if dupssame != []:
+        dupstest = []
+        dupsame = []
+        dupdiff = []
+        for i in range(len(duplicates)):
+            dupstest.append([duplicates[i][0][0], duplicates[i][1]])
+        for i in range(len(duplicates)):
+            if dupstest.count([duplicates[i][0][0], duplicates[i][1]]) == 1:
+                print("\t'%s' from '%s'" % (duplicates[i][0], duplicates[i][1]))
+                dupdiff.append([duplicates[i][0], duplicates[i][1]])
+            if dupstest.count([duplicates[i][0][0], duplicates[i][1]]) > 1:
+                print("\t----SAME CSV----'%s' from '%s'" % (duplicates[i][0], duplicates[i][1]))
+                dupsame.append([duplicates[i][0], duplicates[i][1]])
+        if dupsame != []:
             print("\tDuplicates found in the same CSV - FAIL")
             return 1
         elif dupssame == []:
@@ -75,7 +87,7 @@ def prsanitycheck():
     #GET CODES
     localrepo = "../CSV/"
     travisrepo = "CSV/"
-    codesInCSV = getCSV4CCs(travisrepo)
+    codesInCSV = getCSV4CCs(localrepo)
 
     #TEST for four characters
     codeExceptions = [] #Type in exceptions if you need to
