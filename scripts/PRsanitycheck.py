@@ -45,8 +45,12 @@ def notfourcharacters(codes, exceptions=[""]):
         return 1
 
 def duplicatecodes(codes, exceptions=[]):
-    allcodes = [code[0] for code in codes if code[0] not in exceptions]
+    allcodes = []
     dups = []
+    for code in codes:
+        if code[0] not in exceptions:
+            allcodes.append(code[0])
+
     for i in range(len(codes)):
         if allcodes.count(codes[i][0]) > 1:
             dups.append([codes[i][3], codes[i][2]])
@@ -80,7 +84,7 @@ def prsanitycheck():
     #GET CODES
     localrepo = "../CSV/"
     travisrepo = "CSV/"
-    codesspecs = getCSV4CCs(travisrepo)
+    codesspecs = getCSV4CCs(localrepo)
 
     #TEST for four characters
     codeExceptions = [] #Type in exceptions if you need to
