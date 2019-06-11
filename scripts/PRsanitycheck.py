@@ -50,8 +50,6 @@ def notfourcharacters(codes, exceptions=[""]):
 
 def duplicatecodes(codes, exceptions=[]):
     allcodes = [code[0] for code in codes if code[0] not in exceptions]
-    # duplicates = sorted([[codes[i][0], codes[i][2]] for i in range(len(codes)) if allcodes.count(codes[i][0]) > 1])
-
     dups = []
     for i in range(len(codes)):
         if allcodes.count(codes[i][0]) > 1:
@@ -97,7 +95,7 @@ def prsanitycheck():
     duplicates = duplicatecodes(codesspecs, dupexceptions)
 
     # Exit Codes
-    # returnvalue = (not4ccs + duplicates) #+ unregisteredspecs + emptycols
+    returnvalue = (not4ccs + duplicates) #+ unregisteredspecs + emptycols
     # if returnvalue == 0:
     #     print("\nPR passed all checks")
     #     exit(0)
