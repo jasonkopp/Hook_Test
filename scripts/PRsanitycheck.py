@@ -97,17 +97,21 @@ def prsanitycheck():
     dupexceptions = ["xml "]
     duplicates = duplicatecodes(codesInCSV, dupexceptions)
 
-    #Exit Codes
-    returnvalue = not4ccs + duplicates #+ unregisteredspecs + emptycols
-    if returnvalue == 0:
-        print("\nPR passed all checks")
+    if not4ccs + duplicates == 0:
         exit(0)
-    elif returnvalue != 0:
-        if returnvalue == 1:
-            print("\nPR failed 1 check")
-        elif returnvalue > 1:
-            print("\nPR failed %d checks" % returnvalue)
-        exit(returnvalue)
+    elif not4ccs + duplicates != 0:
+        exit(1)
+
+    # returnvalue = not4ccs + duplicates #+ unregisteredspecs + emptycols
+    # if returnvalue == 0:
+    #     print("\nPR passed all checks")
+    #     exit(0)
+    # elif returnvalue != 0:
+    #     if returnvalue == 1:
+    #         print("\nPR failed 1 check")
+    #     elif returnvalue > 1:
+    #         print("\nPR failed %d checks" % returnvalue)
+    #     exit(returnvalue)
 
 prsanitycheck()
 
@@ -124,3 +128,15 @@ prsanitycheck()
     # #Test for Filled in Columns
     # # colsexceptions = [""]
     # emptycols = filledcolumns(codesInCSV[0])
+    #
+    # #Exit Codes
+    # returnvalue = not4ccs + duplicates + unregisteredspecs + emptycols
+    # if returnvalue == 0:
+    #     print("\nPR passed all checks")
+    #     exit(0)
+    # elif returnvalue != 0:
+    #     if returnvalue == 1:
+    #         print("\nPR failed 1 check")
+    #     elif returnvalue > 1:
+    #         print("\nPR failed %d checks" % returnvalue)
+    #     exit(returnvalue)
