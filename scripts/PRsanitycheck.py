@@ -33,12 +33,12 @@ def getCSV4CCs(directory):
                         codesInCSV.append([csvCode, csvSpec, csvFile, csvLine])
     return codesInCSV
 
-def notfourcharacters(codes, codeExceptions=[""]):
+def notfourcharacters(codes, exceptions=[""]):
     pattern = re.compile("^[A-Za-z0-9 +-]{4}$")
     mistakeCodes = []
     for code in codes:
         if pattern.match(code[0]) == None:
-            if code[0] not in codeExceptions:
+            if code[0] not in exceptions:
                 mistakeCodes.append(code[0])
     print("\nFour Character Codes Test:")
     if mistakeCodes == []:
@@ -48,18 +48,18 @@ def notfourcharacters(codes, codeExceptions=[""]):
         print("\tSomething is wrong with these codes: %s - FAIL" % mistakeCodes)
         return 1
 
-def duplicatecodes(codes, dupexceptions=[]):
-    allcodes = [code[0] for code in codes if code[0] not in dupexceptions]
+def duplicatecodes(codes, exceptions=[]):
+    allcodes = [code[0] for code in codes if code[0] not in exceptions]
     # duplicates = sorted([[codes[i][0], codes[i][2]] for i in range(len(codes)) if allcodes.count(codes[i][0]) > 1])
 
-    duplicates = []
+    dups = []
     dupcodes = []
     for i in range(len(codes)):
         if allcodes.count(codes[i][0]) > 1:
-            duplicates.append([codes[i][3], codes[i][2]])
-    duplicates = sorted(duplicates)
+            dups.append([codes[i][3], codes[i][2]])
+    dupssorted = sorted(dups)
 
-    if duplicates == []:
+    if dupssorted == []:
         print("Duplicate 4CCs Test:\n\tNo duplicates found - PASS")
         return 0
     else:
@@ -67,15 +67,15 @@ def duplicatecodes(codes, dupexceptions=[]):
         dupstest = []
         dupsame = []
         dupdiff = []
-        for i in range(len(duplicates)):
-            dupstest.append([duplicates[i][0][0], duplicates[i][1]])
-        for i in range(len(duplicates)):
-            if dupstest.count([duplicates[i][0][0], duplicates[i][1]]) == 1:
-                print("\t'%s' from '%s'" % (duplicates[i][0], duplicates[i][1]))
-                dupdiff.append([duplicates[i][0], duplicates[i][1]])
-            if dupstest.count([duplicates[i][0][0], duplicates[i][1]]) > 1:
-                print("\t----SAME CSV----'%s' from '%s'" % (duplicates[i][0], duplicates[i][1]))
-                dupsame.append([duplicates[i][0], duplicates[i][1]])
+        for i in range(len(dupssorted)):
+            dupstest.append([dupssorted[i][0][0], dupssorted[i][1]])
+        for i in range(len(dupssorted)):
+            if dupstest.count([dupssorted[i][0][0], dupssorted[i][1]]) == 1:
+                print("\t'%s' from '%s'" % (dupssorted[i][0], dupssorted[i][1]))
+                dupdiff.append([dupssorted[i][0], dupssorted[i][1]])
+            if dupstest.count([dupssorted[i][0][0], dupssorted[i][1]]) > 1:
+                print("\t----SAME CSV----'%s' from '%s'" % (dupssorted[i][0], dupssorted[i][1]))
+                dupsame.append([dupssorted[i][0], dupssorted[i][1]])
         if dupsame != []:
             print("\tDuplicates found in the same CSV - FAIL")
             return 1
@@ -87,15 +87,15 @@ def prsanitycheck():
     #GET CODES
     localrepo = "../CSV/"
     travisrepo = "CSV/"
-    codesInCSV = getCSV4CCs(travisrepo)
+    codesspecs = getCSV4CCs(localrepo)
 
     #TEST for four characters
     codeExceptions = [] #Type in exceptions if you need to
-    not4ccs = notfourcharacters(codesInCSV, codeExceptions)
+    not4ccs = notfourcharacters(codesspecs, codeExceptions)
 
     #Test for Duplicates
     dupexceptions = ["xml "]
-    duplicates = duplicatecodes(codesInCSV, dupexceptions)
+    duplicates = duplicatecodes(codesspecs, dupexceptions)
 
     # Exit Codes
     if not4ccs + duplicates == 0:
