@@ -72,7 +72,7 @@ def duplicatecodes(codes, exceptions=[]):
         if dupsame != []:
             print("\tDuplicates found in the same CSV - FAIL")
             return 1
-        elif dupssame == []:
+        elif dupsame == []:
             print("\tNo duplicates found in the same CSV - PASS")
             return 0
 
@@ -80,14 +80,14 @@ def prsanitycheck():
     #GET CODES
     localrepo = "../CSV/"
     travisrepo = "CSV/"
-    codesspecs = getCSV4CCs(travisrepo)
+    codesspecs = getCSV4CCs(localrepo)
 
     #TEST for four characters
     codeExceptions = [] #Type in exceptions if you need to
     not4ccs = notfourcharacters(codesspecs, codeExceptions)
 
     #Test for Duplicates
-    dupexceptions = ["xml "]
+    dupexceptions = ["xml ", "file", " or "]
     duplicates = duplicatecodes(codesspecs, dupexceptions)
 
     # Exit Codes
