@@ -7,8 +7,8 @@ import csv, re, os
 # are all the mandatory columns filled in?
 
 def getCSV4CCs(directory):
-    csvCodes = []
     codesInCSV = []
+    speclist = []
     for fileName in os.listdir(directory):
         if fileName.endswith(".csv") and fileName != "oti.csv" and fileName != "stream-types.csv":
             with open(directory+fileName, 'r') as csvfile:
@@ -26,9 +26,14 @@ def getCSV4CCs(directory):
                         else:
                             csvSpec = "No spec"
                         csvFile = fileName.lower()
-
                         codesInCSV.append([csvCode, csvDesc, csvSpec, csvFile])
-    return codesInCSV
+                if fileName == "specifications.csv":
+                    for row in csvReader:
+                        linkname = row['linkname']
+                        spec = row['specification']
+                        desc = row['description']
+                        speclist.append([linkname, spec, desc])
+    return (codesInCSV, speclist)
 
 def notfourcharacters(codes, exceptions=[""]):
     pattern = re.compile("^[A-Za-z0-9 +-]{4}$")
@@ -86,11 +91,11 @@ def prsanitycheck():
 
     #TEST for four characters
     codeExceptions = [] #Type in exceptions if you need to
-    not4ccs = notfourcharacters(codesspecs, codeExceptions)
+    not4ccs = notfourcharacters(codesspecs[0], codeExceptions)
 
     #Test for Duplicates
     dupexceptions = ["xml ", "file", " or "]
-    duplicates = duplicatecodes(codesspecs, dupexceptions)
+    duplicates = duplicatecodes(codesspecs[0], dupexceptions)
 
     # Exit Codes
     returnvalue = (not4ccs + duplicates) #+ unregisteredspecs + emptycols
