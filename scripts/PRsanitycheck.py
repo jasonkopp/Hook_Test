@@ -82,7 +82,7 @@ def prsanitycheck():
     #GET CODES
     localrepo = "../CSV/"
     travisrepo = "CSV/"
-    codesspecs = getCSV4CCs(localrepo)
+    codesspecs = getCSV4CCs(travisrepo)
 
     #TEST for four characters
     codeExceptions = [] #Type in exceptions if you need to
