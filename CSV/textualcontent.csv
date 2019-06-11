@@ -1,4 +1,4 @@
-code,sentence,specification
+code,description,specification
 file,are indicated as being at ‘file’ level,partial
 heif,MIME subtype name SHALL be 'heif',heif
 $20or$20,may be indexed in a ‘hierarchical’ or ‘daisy-chain’,iso
