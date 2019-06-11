@@ -98,10 +98,9 @@ def prsanitycheck():
     duplicates = duplicatecodes(codesInCSV, dupexceptions)
 
     # Exit Codes
-    returnvalue = (not4ccs + duplicates)
-    if returnvalue == 0:
+    if not4ccs + duplicates == 0:
         exit(0)
-    elif returnvalue != 0:
+    elif not4ccs + duplicates != 0:
         exit(1)
 
     # #Exit Codes
