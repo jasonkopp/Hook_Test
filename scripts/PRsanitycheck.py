@@ -96,15 +96,15 @@ def prsanitycheck():
 
     # Exit Codes
     # returnvalue = (not4ccs + duplicates) #+ unregisteredspecs + emptycols
-    # if returnvalue == 0:
-    #     print("\nPR passed all checks")
-    #     exit(0)
-    # elif returnvalue != 0:
-    #     if returnvalue == 1:
-    #         print("\nPR failed 1 check")
-    #     elif returnvalue > 1:
-    #         print("\nPR failed %d checks" % returnvalue)
-    #     exit(returnvalue)
+    if (not4ccs + duplicates) == 0:
+        print("\nPR passed all checks")
+        exit(0)
+    elif (not4ccs + duplicates) == 1:
+        print("\nPR failed 1 check")
+        exit(1)
+    elif (not4ccs + duplicates) > 1:
+        print("\nPR failed %d checks" % (not4ccs + duplicates))
+        exit(not4ccs + duplicates)
 
 prsanitycheck()
 
