@@ -28,6 +28,8 @@ def getCSV4CCs(directory):
                             csvSpec = row['specification'].lower()
                         else:
                             csvSpec = "No spec"
+
+                        csvCodes.append(csvCode)
                         codesInCSV.append([csvCode, csvSpec, csvFile, csvLine])
     return codesInCSV
 
@@ -84,7 +86,7 @@ def prsanitycheck():
     #GET CODES
     localrepo = "../CSV/"
     travisrepo = "CSV/"
-    codesspecs = getCSV4CCs(travisrepo)
+    codesspecs = getCSV4CCs(localrepo)
 
     #TEST for four characters
     codeExceptions = [] #Type in exceptions if you need to
@@ -95,23 +97,31 @@ def prsanitycheck():
     duplicates = duplicatecodes(codesspecs, dupexceptions)
 
     # Exit Codes
-    returnvalue = not4ccs + duplicates #+ unregisteredspecs + emptycols
-    if returnvalue == 0:
-        print("\nPR passed all checks")
-        exit(0)
-    elif returnvalue != 0:
-        if returnvalue == 1:
-            print("\nPR failed 1 check")
-        elif returnvalue > 1:
-            print("\nPR failed %d checks" % returnvalue)
-        exit(returnvalue)
+    # returnvalue = (not4ccs + duplicates) #+ unregisteredspecs + emptycols
+    # if returnvalue == 0:
+    #     print("\nPR passed all checks")
+    #     exit(0)
+    # elif returnvalue != 0:
+    #     if returnvalue == 1:
+    #         print("\nPR failed 1 check")
+    #     elif returnvalue > 1:
+    #         print("\nPR failed %d checks" % returnvalue)
+    #     exit(returnvalue)
 
 prsanitycheck()
 
 
-
+    # #GET CODES
+    # localrepo = "../CSV/"
+    # travisrepo = "CSV/"
+    # codesInCSV = getCSV4CCs(travisrepo)
+    #
+    # #TEST for four characters
+    # codeExceptions = [] #Type in exceptions if you need to
     # not4ccs = notfourcharacters(codesInCSV[0], codeExceptions)
-
+    #
+    # #Test for Duplicates
+    # dupexceptions = ["xml "]
     # duplicates = duplicatecodes(codesInCSV[0], dupexceptions)
     #
     # #Test for Specifications
@@ -121,3 +131,15 @@ prsanitycheck()
     # #Test for Filled in Columns
     # # colsexceptions = [""]
     # emptycols = filledcolumns(codesInCSV[0])
+    #
+    # #Exit Codes
+    # returnvalue = not4ccs + duplicates + unregisteredspecs + emptycols
+    # if returnvalue == 0:
+    #     print("\nPR passed all checks")
+    #     exit(0)
+    # elif returnvalue != 0:
+    #     if returnvalue == 1:
+    #         print("\nPR failed 1 check")
+    #     elif returnvalue > 1:
+    #         print("\nPR failed %d checks" % returnvalue)
+    #     exit(returnvalue)
