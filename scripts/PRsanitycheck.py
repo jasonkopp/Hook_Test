@@ -53,17 +53,16 @@ def duplicatecodes(codes, exceptions=[]):
     # duplicates = sorted([[codes[i][0], codes[i][2]] for i in range(len(codes)) if allcodes.count(codes[i][0]) > 1])
 
     dups = []
-    dupcodes = []
     for i in range(len(codes)):
         if allcodes.count(codes[i][0]) > 1:
             dups.append([codes[i][3], codes[i][2]])
     dupssorted = sorted(dups)
 
+    print("\nDuplicate 4CCs Test:")
     if dupssorted == []:
-        print("Duplicate 4CCs Test:\n\tNo duplicates found - PASS")
+        print("\tNo duplicates found - PASS")
         return 0
     else:
-        print("Duplicate 4CCs Test:")
         dupstest = []
         dupsame = []
         dupdiff = []
@@ -98,24 +97,16 @@ def prsanitycheck():
     duplicates = duplicatecodes(codesspecs, dupexceptions)
 
     # Exit Codes
-    if not4ccs + duplicates == 0:
+    returnvalue = not4ccs + duplicates #+ unregisteredspecs + emptycols
+    if returnvalue == 0:
+        print("\nPR passed all checks")
         exit(0)
-    elif not4ccs + duplicates != 0:
-        exit(1)
-
-    # #Exit Codes
-    # returnvalue = not4ccs + duplicates + unregisteredspecs + emptycols
-    # if returnvalue == 0:
-    #     print("\nPR passed all checks")
-    #     exit(0)
-    # elif returnvalue != 0:
-    #     if returnvalue == 1:
-    #         print("\nPR failed 1 check")
-    #     elif returnvalue > 1:
-    #         print("\nPR failed %d checks" % returnvalue)
-    #     exit(returnvalue)
-
-
+    elif returnvalue != 0:
+        if returnvalue == 1:
+            print("\nPR failed 1 check")
+        elif returnvalue > 1:
+            print("\nPR failed %d checks" % returnvalue)
+        exit(returnvalue)
 
 prsanitycheck()
 
