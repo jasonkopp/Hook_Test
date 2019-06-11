@@ -6,6 +6,10 @@ branches:
   only:
   - master
 
+notifications:
+  slack:
+    on_success: never
+
 before_install:
   - chmod +x ./scripts/PRsanitycheck.py
 

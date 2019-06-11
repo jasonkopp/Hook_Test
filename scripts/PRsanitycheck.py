@@ -20,10 +20,6 @@ def getCSV4CCs(directory):
                         csvCode = code.replace('$20', ' ')
                         csvFile = fileName.lower()
                         csvLine = list(row.values())
-                        if 'description' in headers:
-                            csvDesc = row['description'].lower()
-                        else:
-                            csvDesc = "No desc"
                         if 'specification' in headers:
                             csvSpec = row['specification'].lower()
                         else:
@@ -84,7 +80,7 @@ def prsanitycheck():
     #GET CODES
     localrepo = "../CSV/"
     travisrepo = "CSV/"
-    codesspecs = getCSV4CCs(travisrepo)
+    codesspecs = getCSV4CCs(localrepo)
 
     #TEST for four characters
     codeExceptions = [] #Type in exceptions if you need to
