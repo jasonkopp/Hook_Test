@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 import csv, re, os
 
+# X- are all the codes actually 4 characters (or an escape)?
+# X - are the codes unique, at least in their table, (and give a warning if the code is also in another table)
+# are the spec shortnames registered, or will they be?
+# are all the mandatory columns filled in?
+
 def getCSV4CCs(directory):
     csvCodes = []
     codesInCSV = []
