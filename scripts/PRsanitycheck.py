@@ -8,7 +8,7 @@ import csv, re, os
 
 def getCSV4CCs(directory):
     csvCodes = []
-    codesInCSV = [] 
+    codesInCSV = []
     for fileName in os.listdir(directory):
         if fileName.endswith(".csv") and fileName != "oti.csv" and fileName != "stream-types.csv":
             with open(directory+fileName, 'r') as csvfile:
