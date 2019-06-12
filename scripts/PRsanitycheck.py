@@ -35,7 +35,7 @@ def getCSV4CCs(directory):
                         speclist.append([linkname, spec, desc])
     return (codesInCSV, speclist)
 
-def notfourcharacters(codes, exceptions=[""]):
+def notfourcharacters(codes, exceptions=[]):
     pattern = re.compile("^[A-Za-z0-9 +-]{4}$")
     mistakeCodes = []
     for code in codes:
@@ -83,6 +83,22 @@ def duplicatecodes(codes, exceptions=[]):
             print("\tNo duplicates found in the same CSV - PASS")
             return 0
 
+def registerspecs(codesInCSV, speclist, specexceptions=[]):
+    unregisteredspecs = []
+    allspecs = [spec[1].lower() for spec in speclist]+specexceptions
+    for a in range(len(codesInCSV)):
+        if codesInCSV[a][2].lower() not in allspecs:
+            unregisteredspecs.append(codesInCSV[a])
+    print("\nRegistered Specs Test:")
+    if unregisteredspecs == []:
+        print("\tAll specs are registered - PASS")
+        return 0
+    elif unregisteredspecs != []:
+        for i in unregisteredspecs:
+            print("\t%s----Unregistered" % i)
+        print("\tThere are unregistered specs - FAIL" % unregisteredspecs)
+        return 1
+
 def prsanitycheck():
     #GET CODES
     localrepo = "../CSV/"
@@ -97,8 +113,12 @@ def prsanitycheck():
     dupexceptions = ["xml ", "file", " or "]
     duplicates = duplicatecodes(codesspecs[0], dupexceptions)
 
+    #Test for Specifications
+    specexceptions = ["see (1) below", "partial"]
+    unregisteredspecs = registerspecs(codesspecs[0], codesspecs[1], specexceptions)
+
     # Exit Codes
-    returnvalue = (not4ccs + duplicates) #+ unregisteredspecs + emptycols
+    returnvalue = (not4ccs + duplicates + unregisteredspecs) #+ unregisteredspecs + emptycols
     if returnvalue == 0:
         print("\nPR passed all checks")
         exit(0)
