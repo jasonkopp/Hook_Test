@@ -30,6 +30,7 @@ def getCSV4CCs(directory):
                         csvline = []
                         for i in range(len(row.values())):
                             csvline.append(list(row.values())[i])
+                        print(csvline)
                         codesInCSV.append([csvCode, csvDesc, csvSpec, csvFile, csvline])
                 if fileName == "specifications.csv":
                     for row in csvReader:
