@@ -114,9 +114,7 @@ def filledcolumns(codesInCSV):
     missingcols=[]
     for row in codesInCSV:
         for col in row:
-            # print(col)
             if col == '':
-                # print(tuple([row]))
                 missingcols.append(tuple(row))
     # Remove rows from sample-entries that have a blank in the 4th index. These aren't mandatory cols
     notsamplemissing = missingcols[:]
@@ -125,7 +123,7 @@ def filledcolumns(codesInCSV):
             notsamplemissing.remove(a)
     # removes duplicates that arise from rows that have multiple blank cols
     newmissingcols = set(notsamplemissing)
-    # #return value
+    # return value
     print("\nMissing Columns Test:")
     if newmissingcols == set():
         print("\tNo missing columns - PASS")
