@@ -2,6 +2,8 @@
 import csv, re, os
 
 # Handler type filled out
+# suppress textualcontent and unlisted
+# create exceptions csv
 
 
 def getCSV4CCs(directory):
@@ -18,20 +20,25 @@ def getCSV4CCs(directory):
                         if 'description' in headers:
                             csvDesc = row['description'].lower()
                         else:
-                            csvDesc = "No desc"
+                            csvDesc = "n/a"
                         if 'specification' in headers:
                             csvSpec = row['specification'].lower()
                         else:
-                            csvSpec = "No spec"
+                            csvSpec = "n/a"
                         csvFile = fileName.lower()
-                        #Travis CI was doing weird things to the CSV files. It kept re-arranging them. So attempting to build the csv row each time.
-                        csvline = []
-                        # for i in range(len(row.values())):
-                        #     csvline.append(list(row.values())[i])
-                        for i in row.values():
-                            csvline.append(i)
-                        print(csvline[0])
-                        codesInCSV.append([csvCode, csvDesc, csvSpec, csvFile, csvline])
+                        if 'handler' in headers:
+                            csvHandle = row['handler'].lower()
+                        else:
+                            csvHandle = "n/a"
+                        if 'ObjectType' in headers:
+                            csvObjectType = row['ObjectType'].lower()
+                        else:
+                            csvObjectType = "n/a"
+                        if 'type' in headers:
+                            csvType = row['type'].lower()
+                        else:
+                            csvType = "n/a"
+                        codesInCSV.append([csvCode, csvDesc, csvSpec, csvFile, csvHandle, csvObjectType, csvType])
                 if fileName == "specifications.csv":
                     for row in csvReader:
                         linkname = row['linkname']
@@ -59,7 +66,6 @@ def duplicatecodes(codes, exceptions=[]):
     allcodes = [code[0] for code in codes if code[0] not in exceptions]
     dups = []
     for i in range(len(codes)):
-        # print(codes[i][0])
         if allcodes.count(codes[i][0]) > 1:
             dups.append(codes[i])
     dupssorted = sorted(dups)
@@ -76,10 +82,10 @@ def duplicatecodes(codes, exceptions=[]):
             dupstest.append([dupssorted[i][0], dupssorted[i][3]])
         for i in range(len(dupssorted)):
             if dupstest.count([dupssorted[i][0], dupssorted[i][3]]) == 1:
-                print("\t%s" % (dupssorted[i][0:4]))
+                print("\t%s" % (dupssorted[i][0:7]))
                 dupdiff.append(dupssorted[i][0])
             if dupstest.count([dupssorted[i][0], dupssorted[i][3]]) > 1:
-                print("\t----SAME CSV----%s" % (dupssorted[i][0:4]))
+                print("\t----SAME CSV----%s" % (dupssorted[i][0:7]))
                 dupsame.append([dupssorted[i][0]])
         if dupsame != []:
             print("\tDuplicates found in the same CSV - FAIL")
@@ -100,33 +106,33 @@ def registerspecs(codesInCSV, speclist, specexceptions=[]):
         return 0
     elif unregisteredspecs != []:
         for i in unregisteredspecs:
-            print("\t%s----Unregistered" % i)
+            print("\t'%s' from '%s'" % (i[2], i[3]))
         print("\tThere are unregistered specs - FAIL" % unregisteredspecs)
         return 1
 
 def filledcolumns(codesInCSV):
     missingcols=[]
-    for a in range(len(codesInCSV)):
-        for b in range(len(codesInCSV[a][4])):
-            if codesInCSV[a][4][b] == '':
-                missingcols.append((tuple(codesInCSV[a][4]), codesInCSV[a][3]))
-    #Remove rows from sample-entries that have a blank in the 4th index. These aren't mandatory cols
+    for row in codesInCSV:
+        for col in row:
+            # print(col)
+            if col == '':
+                # print(tuple([row]))
+                missingcols.append(tuple(row))
+    # Remove rows from sample-entries that have a blank in the 4th index. These aren't mandatory cols
     notsamplemissing = missingcols[:]
-    for row in missingcols:
-        if row[1] == 'sample-entries.csv' and row[0][0] != '' and row[0][1] != '' and row[0][2] != '' and row[0][3] != '' and row[0][4] == '':
-            notsamplemissing.remove(row)
-
-    #removes duplicates that arise from rows that have multiple blank cols
+    for a in missingcols:
+        if a[3] == 'sample-entries.csv' and a[0] != '' and a[1] != '' and a[2] != '' and a[4] != ''and a[5] == '':
+            notsamplemissing.remove(a)
+    # removes duplicates that arise from rows that have multiple blank cols
     newmissingcols = set(notsamplemissing)
-
-    #return value
+    # #return value
     print("\nMissing Columns Test:")
     if newmissingcols == set():
         print("\tNo missing columns - PASS")
         return 0
     elif newmissingcols != set():
-        for row in newmissingcols:
-            print("\t%s from %s" % (str(row[0]), str(row[1])))
+        for b in newmissingcols:
+            print("\t'%s' from '%s'" % (str(b[0]), str(b[3])))
         print("\tThese rows have missing columns - FAIL")
         return 1
 
