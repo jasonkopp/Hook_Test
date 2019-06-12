@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 import csv, re, os
 
-# X- are all the codes actually 4 characters (or an escape)?
-# X - are the codes unique, at least in their table, (and give a warning if the code is also in another table)
-# are the spec shortnames registered, or will they be?
-# are all the mandatory columns filled in?
+# Handler type filled out
+
 
 def getCSV4CCs(directory):
     codesInCSV = []
@@ -28,8 +26,10 @@ def getCSV4CCs(directory):
                         csvFile = fileName.lower()
                         #Travis CI was doing weird things to the CSV files. It kept re-arranging them. So attempting to build the csv row each time.
                         csvline = []
-                        for i in range(len(row.values())):
-                            csvline.append(list(row.values())[i])
+                        # for i in range(len(row.values())):
+                        #     csvline.append(list(row.values())[i])
+                        for i in row.values():
+                            csvline.append(i)
                         print(csvline)
                         codesInCSV.append([csvCode, csvDesc, csvSpec, csvFile, csvline])
                 if fileName == "specifications.csv":
