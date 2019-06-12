@@ -26,8 +26,11 @@ def getCSV4CCs(directory):
                         else:
                             csvSpec = "No spec"
                         csvFile = fileName.lower()
-                        csvLine = list(row.values())
-                        codesInCSV.append([csvCode, csvDesc, csvSpec, csvFile, csvLine])
+                        #Travis CI was doing weird things to the CSV files. It kept re-arranging them. So attempting to build the csv row each time.
+                        csvline = []
+                        for i in range(len(row.values())):
+                            csvline.append(list(row.values())[i])
+                        codesInCSV.append([csvCode, csvDesc, csvSpec, csvFile, csvline])
                 if fileName == "specifications.csv":
                     for row in csvReader:
                         linkname = row['linkname']
@@ -100,34 +103,31 @@ def registerspecs(codesInCSV, speclist, specexceptions=[]):
         print("\tThere are unregistered specs - FAIL" % unregisteredspecs)
         return 1
 
-# def filledcolumns(codesInCSV):
-#     # missingcols=[]
-#     # for a in range(len(codesInCSV)):
-#     #     #fourth index in sample-entry (ObjectType) is okay if it is blank. But print the row if any other columns are blank
-#     #     if codesInCSV[a][2] == "sample-entries.csv" and codesInCSV[a][3][4] == '':
-#     #         for b in range(0,3):
-#     #             if codesInCSV[a][3][b] == "":
-#     #                 missingcols.append([codesInCSV[a][3], codesInCSV[a][2]])
-#     #     else:
-#     #         for b in range(len(codesInCSV[a][3])):
-#     #             if codesInCSV[a][3][b] == '' or codesInCSV[a][3][b] == ' ':
-#     #                 missingcols.append([codesInCSV[a][3], codesInCSV[a][2]])
-#     missingcols=[]
-#     for a in range(len(codesInCSV)):
-#         #fourth index in sample-entry (ObjectType) is okay if it is blank. But print the row if any other columns are blank
-#         for b in range(len(codesInCSV[a][3])):
-#             if codesInCSV[a][3][b] == '':
-#                 missingcols.append([codesInCSV[a][3], codesInCSV[a][2]])
-#     print("\nMissing Columns Test:")
-#     if missingcols == []:
-#         print("\tNo missing columns - PASS")
-#         return 0
-#     elif missingcols != []:
-#         for row in missingcols:
-#             print("\t%s" % row)
-#         print("\tThere are missing columns - FAIL")
-#         return 1
-#     return missingcols
+def filledcolumns(codesInCSV):
+    missingcols=[]
+    for a in range(len(codesInCSV)):
+        for b in range(len(codesInCSV[a][4])):
+            if codesInCSV[a][4][b] == '':
+                missingcols.append((tuple(codesInCSV[a][4]), codesInCSV[a][3]))
+    #Remove rows from sample-entries that have a blank in the 4th index. These aren't mandatory cols
+    notsamplemissing = missingcols[:]
+    for row in missingcols:
+        if row[1] == 'sample-entries.csv' and row[0][0] != '' and row[0][1] != '' and row[0][2] != '' and row[0][3] != '' and row[0][4] == '':
+            notsamplemissing.remove(row)
+
+    #removes duplicates that arise from rows that have multiple blank cols
+    newmissingcols = set(notsamplemissing)
+
+    #return value
+    print("\nMissing Columns Test:")
+    if newmissingcols == set():
+        print("\tNo missing columns - PASS")
+        return 0
+    elif newmissingcols != set():
+        for row in newmissingcols:
+            print("\t%s from %s" % (str(row[0]), str(row[1])))
+        print("\tThese rows have missing columns - FAIL")
+        return 1
 
 def prsanitycheck():
     #GET CODES
@@ -148,10 +148,10 @@ def prsanitycheck():
     unregisteredspecs = registerspecs(codesspecs[0], codesspecs[1], specexceptions)
 
     #Test for Filled in Columns
-    # emptycols = filledcolumns(codesspecs[0])
+    emptycols = filledcolumns(codesspecs[0])
 
     # Exit Codes
-    returnvalue = (not4ccs + duplicates + unregisteredspecs) #+ unregisteredspecs + emptycols
+    returnvalue = (not4ccs + duplicates + unregisteredspecs + emptycols)
     if returnvalue == 0:
         print("\nPR passed all checks")
         exit(0)
