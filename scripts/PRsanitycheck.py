@@ -26,7 +26,8 @@ def getCSV4CCs(directory):
                         else:
                             csvSpec = "No spec"
                         csvFile = fileName.lower()
-                        codesInCSV.append([csvCode, csvDesc, csvSpec, csvFile])
+                        csvLine = list(row.values())
+                        codesInCSV.append([csvCode, csvDesc, csvSpec, csvFile, csvLine])
                 if fileName == "specifications.csv":
                     for row in csvReader:
                         linkname = row['linkname']
@@ -71,11 +72,11 @@ def duplicatecodes(codes, exceptions=[]):
             dupstest.append([dupssorted[i][0], dupssorted[i][3]])
         for i in range(len(dupssorted)):
             if dupstest.count([dupssorted[i][0], dupssorted[i][3]]) == 1:
-                print("\t%s" % (dupssorted[i]))
-                dupdiff.append(dupssorted[i])
+                print("\t%s" % (dupssorted[i][0:4]))
+                dupdiff.append(dupssorted[i][0])
             if dupstest.count([dupssorted[i][0], dupssorted[i][3]]) > 1:
-                print("\t----SAME CSV----%s" % (dupssorted[i]))
-                dupsame.append([dupssorted[i]])
+                print("\t----SAME CSV----%s" % (dupssorted[i][0:4]))
+                dupsame.append([dupssorted[i][0]])
         if dupsame != []:
             print("\tDuplicates found in the same CSV - FAIL")
             return 1
@@ -99,6 +100,35 @@ def registerspecs(codesInCSV, speclist, specexceptions=[]):
         print("\tThere are unregistered specs - FAIL" % unregisteredspecs)
         return 1
 
+# def filledcolumns(codesInCSV):
+#     # missingcols=[]
+#     # for a in range(len(codesInCSV)):
+#     #     #fourth index in sample-entry (ObjectType) is okay if it is blank. But print the row if any other columns are blank
+#     #     if codesInCSV[a][2] == "sample-entries.csv" and codesInCSV[a][3][4] == '':
+#     #         for b in range(0,3):
+#     #             if codesInCSV[a][3][b] == "":
+#     #                 missingcols.append([codesInCSV[a][3], codesInCSV[a][2]])
+#     #     else:
+#     #         for b in range(len(codesInCSV[a][3])):
+#     #             if codesInCSV[a][3][b] == '' or codesInCSV[a][3][b] == ' ':
+#     #                 missingcols.append([codesInCSV[a][3], codesInCSV[a][2]])
+#     missingcols=[]
+#     for a in range(len(codesInCSV)):
+#         #fourth index in sample-entry (ObjectType) is okay if it is blank. But print the row if any other columns are blank
+#         for b in range(len(codesInCSV[a][3])):
+#             if codesInCSV[a][3][b] == '':
+#                 missingcols.append([codesInCSV[a][3], codesInCSV[a][2]])
+#     print("\nMissing Columns Test:")
+#     if missingcols == []:
+#         print("\tNo missing columns - PASS")
+#         return 0
+#     elif missingcols != []:
+#         for row in missingcols:
+#             print("\t%s" % row)
+#         print("\tThere are missing columns - FAIL")
+#         return 1
+#     return missingcols
+
 def prsanitycheck():
     #GET CODES
     localrepo = "../CSV/"
@@ -116,6 +146,9 @@ def prsanitycheck():
     #Test for Specifications
     specexceptions = ["see (1) below", "partial"]
     unregisteredspecs = registerspecs(codesspecs[0], codesspecs[1], specexceptions)
+
+    #Test for Filled in Columns
+    # emptycols = filledcolumns(codesspecs[0])
 
     # Exit Codes
     returnvalue = (not4ccs + duplicates + unregisteredspecs) #+ unregisteredspecs + emptycols
