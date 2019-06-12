@@ -131,7 +131,7 @@ def filledcolumns(codesInCSV):
     elif newmissingcols != set():
         for b in newmissingcols:
             print("\t'%s' from '%s'" % (str(b[0]), str(b[3])))
-        print("\tThese rows have missing columns - FAIL")
+        print("\tThese specs have missing columns - FAIL")
         return 1
 
 def prsanitycheck():
