@@ -10,7 +10,7 @@ def getCSV4CCs(directory):
     codesInCSV = []
     speclist = []
     for fileName in os.listdir(directory):
-        if fileName.endswith(".csv") and fileName != "oti.csv" and fileName != "stream-types.csv":
+        if fileName.endswith(".csv") and fileName != "oti.csv" and fileName != "stream-types.csv" and fileName != "unlisted.csv" and fileName != "textualcontent.csv" and fileName != "knownduplicates.csv":
             with open(directory+fileName, 'r') as csvfile:
                 csvReader = csv.DictReader(csvfile)
                 headers = csvReader.fieldnames
@@ -134,22 +134,27 @@ def filledcolumns(codesInCSV):
         print("\tThese specs have missing columns - FAIL")
         return 1
 
+def knownduplicates(filename):
+    with open(filename, 'r') as file:
+        knownduplicatescsv = [row.replace('$20', ' ').replace('\n', '') for row in file]
+    return knownduplicatescsv
+
 def prsanitycheck():
     #GET CODES
     localrepo = "../CSV/"
     travisrepo = "CSV/"
-    codesspecs = getCSV4CCs(travisrepo)
+    codesspecs = getCSV4CCs(localrepo)
 
     #TEST for four characters
     codeExceptions = [] #Type in exceptions if you need to
     not4ccs = notfourcharacters(codesspecs[0], codeExceptions)
 
     #Test for Duplicates
-    dupexceptions = ["xml ", "file", " or "]
-    duplicates = duplicatecodes(codesspecs[0], dupexceptions)
+    knownduplicateslist = knownduplicates(localrepo+"knownduplicates.csv")
+    duplicates = duplicatecodes(codesspecs[0], knownduplicateslist)
 
     #Test for Specifications
-    specexceptions = ["see (1) below", "partial"]
+    specexceptions = ["see (1) below"]
     unregisteredspecs = registerspecs(codesspecs[0], codesspecs[1], specexceptions)
 
     #Test for Filled in Columns
