@@ -150,7 +150,7 @@ def prsanitycheck():
     not4ccs = notfourcharacters(codesspecs[0], codeExceptions)
 
     #Test for Duplicates
-    knownduplicateslist = knownduplicates(localrepo+"knownduplicates.csv")
+    knownduplicateslist = knownduplicates(travisrepo+"knownduplicates.csv")
     duplicates = duplicatecodes(codesspecs[0], knownduplicateslist)
 
     #Test for Specifications
