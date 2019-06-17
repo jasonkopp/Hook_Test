@@ -2,13 +2,12 @@
 import csv, re, os
 
 # Handler type filled out
-# suppress textualcontent and unlisted
-# create exceptions csv
 
 
 def getCSV4CCs(directory):
     codesInCSV = []
     speclist = []
+    handlelist = []
     for fileName in os.listdir(directory):
         if fileName.endswith(".csv") and fileName != "oti.csv" and fileName != "stream-types.csv" and fileName != "unlisted.csv" and fileName != "textualcontent.csv" and fileName != "knownduplicates.csv":
             with open(directory+fileName, 'r') as csvfile:
@@ -45,7 +44,7 @@ def getCSV4CCs(directory):
                         spec = row['specification']
                         desc = row['description']
                         speclist.append([linkname, spec, desc])
-    return (codesInCSV, speclist)
+    return (codesInCSV, speclist, handlelist)
 
 def notfourcharacters(codes, exceptions=[]):
     pattern = re.compile("^[A-Za-z0-9 +-]{4}$")
@@ -106,8 +105,8 @@ def registerspecs(codesInCSV, speclist, specexceptions=[]):
         return 0
     elif unregisteredspecs != []:
         for i in unregisteredspecs:
-            print("\t'%s' from '%s'" % (i[2], i[3]))
-        print("\tThere are unregistered specs - FAIL" % unregisteredspecs)
+            print("\t'%s' - '%s' from '%s'" % (i[0], i[2], i[3]))
+        print("\tThere are unregistered specs - FAIL")
         return 1
 
 def filledcolumns(codesInCSV):
@@ -139,18 +138,39 @@ def knownduplicates(filename):
         knownduplicatescsv = [row.replace('$20', ' ').replace('\n', '') for row in file]
     return knownduplicatescsv
 
+def registerhandle(codesInCSV, handleexceptions):
+    unregisteredhandles = []
+    allhandles = [handle[1].lower() for handle in codesInCSV if handle[3] == "handlers.csv"]+handleexceptions
+    for a in range(len(codesInCSV)):
+        if codesInCSV[a][4].lower() not in allhandles:
+            unregisteredhandles.append(codesInCSV[a])
+    print("\nRegistered Handles Test:")
+    if unregisteredhandles == []:
+        print("\tAll handles are registered - PASS")
+        return 0
+    elif unregisteredhandles != []:
+        for i in unregisteredhandles:
+            print("\t'%s' - '%s' from '%s'" % (i[0], i[4], i[3]))
+        print("\tThere are unregistered handles - FAIL")
+        return 1
+
 def prsanitycheck():
     #GET CODES
-    localrepo = "../CSV/"
-    travisrepo = "CSV/"
-    codesspecs = getCSV4CCs(travisrepo)
+    # repo = "local"
+    repo = "travis"
+    if repo == "travis":
+        repo = "CSV/"
+    elif repo == "local":
+        repo = "../CSV/"
+
+    codesspecs = getCSV4CCs(repo)
 
     #TEST for four characters
     codeExceptions = [] #Type in exceptions if you need to
     not4ccs = notfourcharacters(codesspecs[0], codeExceptions)
 
     #Test for Duplicates
-    knownduplicateslist = knownduplicates(travisrepo+"knownduplicates.csv")
+    knownduplicateslist = knownduplicates(repo+"knownduplicates.csv")
     duplicates = duplicatecodes(codesspecs[0], knownduplicateslist)
 
     #Test for Specifications
@@ -160,8 +180,12 @@ def prsanitycheck():
     #Test for Filled in Columns
     emptycols = filledcolumns(codesspecs[0])
 
+    #Test for registered handle types
+    handleexceptions = ["n/a"]
+    unregisteredhandles = registerhandle(codesspecs[0], handleexceptions)
+
     # Exit Codes
-    returnvalue = (not4ccs + duplicates + unregisteredspecs + emptycols)
+    returnvalue = (not4ccs + duplicates + unregisteredspecs + emptycols + unregisteredhandles)
     if returnvalue == 0:
         print("\nPR passed all checks")
         exit(0)
