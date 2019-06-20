@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 import csv, re, os
 
-# Handler type filled out
-
-
 def getCSV4CCs(directory):
     codesInCSV = []
     speclist = []
@@ -15,7 +12,7 @@ def getCSV4CCs(directory):
                 headers = csvReader.fieldnames
                 if 'code' in headers:
                     for row in csvReader:
-                        csvCode = row['code'].replace('$20', ' ')
+                        csvCode = row['code'].replace(' ', '_').replace('$20', ' ')
                         if 'description' in headers:
                             csvDesc = row['description'].lower()
                         else:
@@ -52,13 +49,15 @@ def notfourcharacters(codes, exceptions=[]):
     for code in codes:
         if pattern.match(code[0]) == None:
             if code[0] not in exceptions:
-                mistakeCodes.append(code[0])
+                mistakeCodes.append([code[0], code[3]])
     print("\nFour Character Codes Test:")
     if mistakeCodes == []:
         print("\tAll 4ccs are four characters - PASS")
         return 0
-    else:
-        print("\tSomething is wrong with these codes: %s - FAIL" % mistakeCodes)
+    elif mistakeCodes != []:
+        for i in mistakeCodes:
+            print("\t'%s' from '%s'" % (i[0], i[1]))
+        print("\tAll 4ccs are not four characters - FAIL")
         return 1
 
 def duplicatecodes(codes, exceptions=[]):
@@ -156,8 +155,8 @@ def registerhandle(codesInCSV, handleexceptions):
 
 def prsanitycheck():
     #GET CODES
-    # repo = "local"
-    repo = "travis"
+    repo = "local"
+    # repo = "travis"
     if repo == "travis":
         repo = "CSV/"
     elif repo == "local":
