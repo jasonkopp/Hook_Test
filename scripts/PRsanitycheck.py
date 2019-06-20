@@ -155,8 +155,8 @@ def registerhandle(codesInCSV, handleexceptions):
 
 def prsanitycheck():
     #GET CODES
-    repo = "local"
-    # repo = "travis"
+    # repo = "local"
+    repo = "travis"
     if repo == "travis":
         repo = "CSV/"
     elif repo == "local":
