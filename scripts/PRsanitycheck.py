@@ -14,6 +14,7 @@ def getCSV4CCs(directory):
                 if 'code' in headers:
                     for row in csvReader:
                         #Replaces spaces with underscores and then $20 with spaces.
+                        #I needed to build the CSV files into python using "n/a" because otherwise the travis check would rearranged the columns. So including all the information I needed in every line of the python csv object was my only solution for solving that issue.
                         csvCode = row['code'].replace(' ', '_').replace('$20', ' ')
                         if 'description' in headers:
                             csvDesc = row['description']
